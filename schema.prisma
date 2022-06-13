@@ -12,11 +12,13 @@ generator client {
 }
 
 model User {
-  id       String @id @default(cuid())
-  name     String @default("")
-  email    String @unique @default("")
+  id       String  @id @default(cuid())
+  name     String  @default("")
+  email    String  @unique @default("")
   password String
-  posts    Post[] @relation("Post_author")
+  isAdmin  Boolean @default(false)
+  posts    Post[]  @relation("Post_author")
+  todos    Todo[]  @relation("Todo_assignedTo")
 }
 
 model Post {
@@ -36,4 +38,16 @@ model Tag {
   id    String @id @default(cuid())
   name  String @default("")
   posts Post[] @relation("Post_tags")
+}
+
+model Todo {
+  id           String    @id @default(cuid())
+  label        String    @default("")
+  priority     String?
+  isComplete   Boolean   @default(false)
+  assignedTo   User?     @relation("Todo_assignedTo", fields: [assignedToId], references: [id])
+  assignedToId String?   @map("assignedTo")
+  finishBy     DateTime?
+
+  @@index([assignedToId])
 }
